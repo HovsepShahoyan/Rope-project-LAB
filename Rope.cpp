@@ -1,41 +1,20 @@
 #include <iostream>
-class Rope;
-struct Node;
-
-class Rope {
-public:
-struct Node {
-public:
-std::string _text = "";
-int _length = 0;
-Node* left = nullptr;
-Node* right = nullptr;
-
-Node(){
-
-}
-
-Node(std::string m_text) {
+#include "Rope.h"
+   
+Rope::Node::Node(std::string m_text) {
     _text = m_text;
     _length = _text.length(); 
 }
 
-void print() const {
+void Rope::Node::print() const {
     std::cout << _text;
 }
 
-};
-
-
-public:
-Node* _root = new Node();
-
-
-Rope(){
-
+int Rope::get_length() {
+    return _root->_length;
 }
 
-void insert(std::string m_text){
+void Rope::insert(std::string m_text) {
    Node* mainNode = new Node(m_text);
    Node* root = new Node(); 
    root->right = mainNode;
@@ -49,7 +28,7 @@ void insert(std::string m_text){
    _root = root;
 }
 
-char Index(int index){
+char Rope::Index(int index) {
     Node* temp_root = _root;
     if(index >= temp_root->_length){
         index = index - temp_root->_length;
@@ -62,56 +41,15 @@ char Index(int index){
     return temp_root->right->_text[index];  
 }
 
-void concat(Rope m_rope) {
-    std::string str= "";
-    for(int i = 0; i < m_rope._root->_length; i++) {
-        str = str + m_rope.Index(i);
+    Rope Rope::concat(Rope& m_rope, Rope& m_rope1) {
+    Rope _tmp;
+    _tmp._root->left = m_rope._root;
+    _tmp._root->right = m_rope1._root;
+    if ( _tmp._root->left->right != nullptr ) {
+        _tmp._root->_length = m_rope1._root->left->_length + m_rope._root->left->right->_length;
+    } else {
+        _tmp._root->_length = m_rope1._root->left->_length; 
     }
-    this->insert(str);
+    return _tmp;
 }
-};
 
-class List {
-private:
-    
-    Node* _head;
-    Node* _current;
-    Node* _temp;
-
-public:
-    
-    List() {
-    }
-
-    void addNode(Node* _node) {
-        _head = new Node();
-        if(_head == nullptr) {
-            _head = _node;
-        }
-        else {
-             _head->
-        }
-    }
-
-};
-
-
-
-
-
-
-
-
-
-int main(){
-Rope rp ;
-Rope rp1;
-rp1.insert("Wor");
-rp1.insert("l");
-rp1.insert("d");
-rp.insert("Hel");
-rp.insert("lo");
-rp.insert("!");
-rp.concat(rp1);
-std::cout << rp.Index(9);
-}
