@@ -1,55 +1,94 @@
 #include <iostream>
 #include "Rope.h"
    
-Rope::Node::Node(std::string m_text) {
-    _text = m_text;
-    _length = _text.length(); 
+Rope::Rope(std::string m_text) {
+    root = new RopeNode;
+    root->text = "";
+    root->left = nullptr;
+    root->right = nullptr;
+    root->weight = m_text.length();
+    root->left = new RopeNode;
+    root->left->text = m_text;
+    root->left->left = nullptr;
+    root->left->right = nullptr;
+    root->left->weight = m_text.length();
 }
 
-void Rope::Node::print() const {
-    std::cout << _text;
+Rope::Rope(Rope&& obj) {
+    root = obj.root;
+    obj.root = nullptr;
 }
 
-int Rope::get_length() {
-    return _root->_length;
+Rope::Rope(const Rope& obj) {
+    root = new RopeNode;
+    root->left = new RopeNode;
+    root->weight = obj.length();
+    root->left->weight = obj.length();
+    //root->left->text = obj.root->text();
 }
 
-void Rope::insert(std::string m_text) {
-   Node* mainNode = new Node(m_text);
-   Node* root = new Node(); 
-   root->right = mainNode;
-   root->left = _root;
-   if ( root->left->right == nullptr ){
-        root->_length = root->left->_length;
-   }  
-   else {
-        root->_length = root->left->_length + root->left->right->_length;
-   }
-   _root = root;
+Rope::~Rope() {
+    if(root) { delete root; }
 }
 
-char Rope::Index(int index) {
-    Node* temp_root = _root;
-    if(index >= temp_root->_length){
-        index = index - temp_root->_length;
-            return temp_root->right->_text[index];      
-    } 
-    while (index < temp_root->_length){
-        temp_root = temp_root->left;
+int Rope::length() const{
+    return root->weight;
+}
+
+Rope::RopeNode::RopeNode() {
+    text = "";
+    left = nullptr;
+    right = nullptr;
+}
+
+Rope::RopeNode::RopeNode() {
+    if(left) { delete left; }
+    if(right) { delete right; }
+}
+
+void Rope::insert(int index, std::string m_text) {
+    if(index >= root->weight) {
+        RopeNode* root_copy = new RopeNode;
+        RopeNode* new_node = new RopeNode;
+        new_node->text = m_text;
+        new_node->weight = m_text.length();
+        root_copy->left = root;
+        root->right = new_node;
+        root_copy->weight = new_node->weight + root->weight;
+        root = root_copy;
     }
-    index = index - temp_root->_length;
-    return temp_root->right->_text[index];  
-}
-
-    Rope Rope::concat(Rope& m_rope, Rope& m_rope1) {
-    Rope _tmp;
-    _tmp._root->left = m_rope._root;
-    _tmp._root->right = m_rope1._root;
-    if ( _tmp._root->left->right != nullptr ) {
-        _tmp._root->_length = m_rope1._root->left->_length + m_rope._root->left->right->_length;
-    } else {
-        _tmp._root->_length = m_rope1._root->left->_length; 
+    else {
+        ++index;
+        RopeNode* root_copy = root;
+        while(root_copy->text.length() != 1) {    
+            if(index > root_copy->weight) {
+                index = index - root_copy->weight;
+                root_copy = root_copy->right;
+            }
+            else {
+                root_copy->weight = root_copy->weight + m_text.length();
+                root_copy = root->left;
+            }
+        }      
     }
-    return _tmp;
-}
+        RopeNode* new_left = new RopeNode;
+        RopeNode* new_right = new RopeNode;
+        RopeNode* new_content = new RopeNode;
 
+        new_left->text= nullptr;
+        new_left->weight = index;
+        new_left->right = new_content;
+        new_left->left = new RopeNode;
+        new_left->left->text = root_copy->text;
+        new_left->left->weight = index;
+
+        new_right->text = root_copy->text+ index;
+        new_right->weight = root_copy->weight - index;
+
+        new_content->text = m_text;
+        new_content->weight = m_text.length();
+
+        root_copy->text = nullptr;
+        root_copy->left = new_left;
+        root_copy->right = new_right;
+}
