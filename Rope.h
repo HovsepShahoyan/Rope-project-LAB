@@ -1,12 +1,13 @@
-#ifndef ROPE.H
-#define ROPE.H
+#ifndef ROPE_H
+#define ROPE_H
 #include <iostream>
 
 class Rope {
-private:
+public:
     Rope(std::string);
     Rope(const Rope&);
     Rope(Rope&&);
+    Rope(std::initializer_list<std::string> init_list);
     ~Rope();
 public:
     void insert(int, std::string);
@@ -24,4 +25,4 @@ private:
     RopeNode* root;
 };
 
-#endif // ROPE.H
+#endif // ROPE_H

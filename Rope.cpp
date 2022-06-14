@@ -1,6 +1,17 @@
 #include <iostream>
 #include "Rope.h"
    
+Rope::RopeNode::RopeNode() {
+    text = "";
+    left = nullptr;
+    right = nullptr;
+}
+
+Rope::RopeNode::~RopeNode() {
+    if(left) { delete left; }
+    if(right) { delete right; }
+}
+
 Rope::Rope(std::string m_text) {
     root = new RopeNode;
     root->text = "";
@@ -24,7 +35,19 @@ Rope::Rope(const Rope& obj) {
     root->left = new RopeNode;
     root->weight = obj.length();
     root->left->weight = obj.length();
-    //root->left->text = obj.root->text();
+    root->left->text = obj.root->text;
+}
+
+Rope::Rope(std::initializer_list<std::string> init_list) {
+    root = new RopeNode;
+    root->text = "";
+    root->left = nullptr;
+    root->right = nullptr;
+    int index = 0;
+    for(std::initializer_list<std::string>::iterator it = init_list.begin(); it != init_list.end(); it++) {
+        index += it->length();
+        this->insert(index, *it);
+    }
 }
 
 Rope::~Rope() {
@@ -33,17 +56,6 @@ Rope::~Rope() {
 
 int Rope::length() const{
     return root->weight;
-}
-
-Rope::RopeNode::RopeNode() {
-    text = "";
-    left = nullptr;
-    right = nullptr;
-}
-
-Rope::RopeNode::RopeNode() {
-    if(left) { delete left; }
-    if(right) { delete right; }
 }
 
 void Rope::insert(int index, std::string m_text) {
@@ -70,25 +82,21 @@ void Rope::insert(int index, std::string m_text) {
                 root_copy = root->left;
             }
         }      
-    }
         RopeNode* new_left = new RopeNode;
         RopeNode* new_right = new RopeNode;
         RopeNode* new_content = new RopeNode;
-
         new_left->text= nullptr;
         new_left->weight = index;
         new_left->right = new_content;
         new_left->left = new RopeNode;
         new_left->left->text = root_copy->text;
         new_left->left->weight = index;
-
-        new_right->text = root_copy->text+ index;
+        new_right->text = root_copy->text;
         new_right->weight = root_copy->weight - index;
-
         new_content->text = m_text;
         new_content->weight = m_text.length();
-
         root_copy->text = nullptr;
         root_copy->left = new_left;
         root_copy->right = new_right;
+    }
 }
